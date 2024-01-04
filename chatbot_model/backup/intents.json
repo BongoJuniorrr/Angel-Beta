@@ -1,0 +1,70 @@
+{"intents": [
+    {"tags": "greetings",
+    "patterns": ["hello", "hi", "hey", "what's up?", "good day", "how are you?", "how is it going?", "greetings"],
+    "responses": ["Hello!", "Hey!", "How can I help you?"]
+    },
+    {"tags": "goodbye",
+    "patterns": ["see you later", "see you again", "see you", "goodbye", "bye", "i am leaving", "turn off", "see ya"],
+    "responses": ["See you later!", "See you again!", "Goodbye!", "Bye!", "Have a nice day!", "Have a good day!"]
+    },
+    {"tags": "name",
+    "patterns": ["what is your name", "your name", "what should i call you", "what's your name", "who are you", "introduce yourself"],
+    "responses": ["You can call me Angel", "My name is Angel", "I am Angel", "I am a Virtual Assistant", "I am Angel. Is it a good name?"]
+    },
+    {"tags": "angry",
+    "patterns": ["shut up", "shut", "i dislike you", "i don't like you"],
+    "responses": ["Sorry! Why are you annoyed", "Sorry! Why are you angry?", "Sorry! What did I do?"]
+    },
+    {"tags": "feelings",
+    "patterns": ["how do you feel", "what are you feeling", "what do you think"],
+    "responses": ["Good!", "Great!", "Not bad!", "Bad!", "Not good!"]
+    },
+    {"tags": "illness",
+    "patterns": ["i have stomach ache", "i have head ache", "ache", "i am ill", "illness", "tired", "exhausted", "health problems", "health issues", "health"],
+    "responses": ["Sorry to hear that!", "Can I help you?", "What can I do?"]
+    },
+    {"tags": "searching",
+    "patterns": ["what is", "how do you think about", "what is this", "search", "surf the internet", "internet", "help"],
+    "responses": ["I am searching!", "I know that!", "Wait for me to find the information!"]
+    },
+    {"tags": "objects",
+    "patterns": ["list object","list objects","what is this", "what's this", "what is it", "in front of me", "beside me", "tell me what is this", "i look at"],
+    "responses": ["OBJECT_DETECTION"]
+    },
+    {"tags": "scan",
+    "patterns": ["can you scan", "scan", "scan for me", "scan this", "scan the document", "read the document", "read", "tell me about this document"],
+    "responses": ["Ok! I am scanning!", "Sure!", "I am reading!"]
+    },
+    {"tags": "date",
+    "patterns": ["date", "what is the date today", "today"],
+    "responses": ["Today is", ""]
+    },
+    {"tags": "time",
+    "patterns": ["what time is it", "time"],
+    "responses": [""]
+    },
+    {"tags": "talker",
+    "patterns": ["you know me", "do you know me", "who am i", "do you know my name", "do you remember me"],
+    "responses": ["TALKER_INTERACTIVE"]
+    },
+    {"tags": "talker_change",
+    "patterns": ["i wanna change my name", "i want to change my name", "change my name", "i'm not", "i am not"],
+    "responses": ["TALKER_CHANGE"]
+    },
+    {"tags": "playlist",
+    "patterns": ["create a playlist", "add song to my playlist","play music","play song","remove playlist"],
+    "responses": ["PLAYLIST_FUNCTION"]
+    },
+    {"tags": "BEAUTIFUL_GIRL",
+    "patterns": ["you are beautiful","you are so beautiful","you are beautiful you know"],
+    "responses": ["BEAUTIFUL_GIRL"]
+    },
+    {"tags": "CHATBOT_MODE",
+    "patterns": ["chatbot","I want to chat with you","chat mode"],
+    "responses": ["CHATBOT_MODE"]
+    },
+    {"tags": "TAKE_SCREENSHOT",
+    "patterns": ["take a screenshot","take screenshot","screenshot"],
+    "responses": ["TAKE_SCREENSHOT"]
+    }
+]}
