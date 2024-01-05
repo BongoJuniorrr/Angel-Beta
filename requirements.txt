@@ -1,0 +1,54 @@
+import pyttsx3
+import speech_recognition
+from datetime  import datetime
+import chatbot
+import ObjectDetection as YOLO
+import cv2
+import requests, json 
+import time
+import numpy as np
+import customtkinter
+from customtkinter import *
+from PIL import Image,ImageTk
+import time
+import textscanning as scanner
+from llama_cpp import Llama
+import cv2
+import sqlite3
+from transformers import VisionEncoderDecoderModel, ViTImageProcessor, AutoTokenizer
+from transformers import VisionEncoderDecoderModel, ViTImageProcessor, AutoTokenizer
+import torch
+from PIL import Image
+import random
+import json
+import pickle
+import numpy as np
+import nltk
+from nltk.stem import WordNetLemmatizer
+import tensorflow as tf
+from customtkinter import *
+from PIL import Image,ImageTk
+import cv2
+import numpy as np
+from PIL import Image
+import pickle
+import sqlite3
+from typing import Any
+import cv2
+import numpy as np
+import pandas as pd
+import matplotlib
+import torch
+import yaml
+import time
+from PIL import Image
+import cv2
+import pytesseract
+from PIL import Image,ImageEnhance
+import time
+import cv2
+import pytesseract
+from PIL import Image,ImageEnhance
+from customtkinter import *
+from PIL import Image,ImageTk
+import time

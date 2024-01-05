@@ -6,7 +6,6 @@ import ObjectDetection as YOLO
 import cv2
 import requests, json 
 import time
-import asyncio
 import numpy as np
 import customtkinter
 from customtkinter import *
@@ -15,11 +14,8 @@ import time
 import textscanning as scanner
 from llama_cpp import Llama
 import cv2
-import numpy as np
-import pickle
 import sqlite3
 from transformers import VisionEncoderDecoderModel, ViTImageProcessor, AutoTokenizer
-import torch
 
 #Captioning Model
 import captioning as Caption

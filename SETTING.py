@@ -1,0 +1,1 @@
+CAM_PORT = 0 #Camera port - default: 0s
