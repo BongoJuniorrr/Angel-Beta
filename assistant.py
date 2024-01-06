@@ -16,11 +16,12 @@ from llama_cpp import Llama
 import cv2
 import sqlite3
 from transformers import VisionEncoderDecoderModel, ViTImageProcessor, AutoTokenizer
+import SETTING
 
 #Captioning Model
 import captioning as Caption
 def predict_capture(cam_port):
-    cam = cv2.VideoCapture(0,cv2.CAP_DSHOW)
+    cam = cv2.VideoCapture(cam_port,cv2.CAP_DSHOW)
     res, frame = cam.read()
     
     if res:
@@ -29,11 +30,10 @@ def predict_capture(cam_port):
         print("Cannot capture image")
         exit()
     
-
 #Answering Model
-monglanghehon = "./mistral-7b-openorca.Q4_K_M.gguf"
+llmmodel = SETTING.llmpath
 model = Llama(
-            model_path=monglanghehon,
+            model_path=llmmodel,
             n_gpu_layers=1,
             n_ctx=4096
             )
@@ -67,37 +67,9 @@ def Make_Chatbot_Faster_Again():
 
 Make_Chatbot_Faster_Again()
 
-# Khởi tạo bộ phát hiện khuôn mặt
-faceDetect=cv2.CascadeClassifier('./face_recognizer/haarcascade_frontalface_default.xml');
-
-# Khởi tạo bộ nhận diện khuôn mặt
-recognizer = cv2.face.LBPHFaceRecognizer_create()
-recognizer.read('./face_recognizer/recognizer/trainner.yml')
-
-id=0
-#set text style
-fontface = cv2.FONT_HERSHEY_SIMPLEX
-fontscale = 1
-fontcolor = (0,255,0)
-fontcolor1 = (0,0,255)
-
-# Hàm lấy thông tin người dùng qua ID
-def getProfile(id):
-    conn=sqlite3.connect("./face_recognizer/FaceBaseNew.db")
-    cursor=conn.execute("SELECT * FROM People WHERE ID="+str(id))
-    profile=None
-    for row in cursor:
-        profile=row
-    conn.close()
-    return profile
-
-# Load a model
 capture = cv2.VideoCapture(0)
 
-
-#Assistant named ANGEL
-
-#Initialize
+#Initialize the Program Requirements
 robot_ear = speech_recognition.Recognizer()
 robot_mouth = pyttsx3.init()
 voices = robot_mouth.getProperty('voices')
@@ -105,12 +77,12 @@ robot_mouth.setProperty('voice', voices[1].id)
 robot_brain = ""
 you = ""
 
-#Initialize the Object Detection function
+#Initialize the Object Detection Requirements
 Detector = YOLO.Object_Detection("0")
 
 #Capture function
 def capture_image(cam_port):
-    cam = cv2.VideoCapture(0,cv2.CAP_DSHOW)
+    cam = cv2.VideoCapture(cam_port,cv2.CAP_DSHOW)
     res, frame = cam.read()
     
     if res:
@@ -134,163 +106,195 @@ def capture_text(cam_port):
 # capture_image(0)
 img = "./Images/IMG.png"
 
-#Init UI Controller
-app = CTk()
-app.title("Angel Asistant")
-app.geometry("800x600")
-set_appearance_mode("dark")
-
-#Face detection UI
-fmy_img = CTkImage(light_image=Image.open('./UI/angel2.jpg'),size=(300,100))
-fname=CTkLabel(master=app, text="Angel", font=("000GosmickSansTB",70) , text_color = "#343434",image=fmy_img)
-fname.place(relx=0.5, rely=0.1, anchor="center")
-#UI Controller
-def wait_there():
-    var = IntVar()
-    app.after(1000, var.set, 1)
-    app.wait_variable(var)
-def img_wait():
-    var = IntVar()
-    app.after(100, var.set, 1)
-    app.wait_variable(var)
-
-#intro
-#load hinh angel
-my_img = CTkImage(light_image=Image.open('./UI/angel2.jpg'),size=(300,100))
-guest = CTkImage(light_image =Image.open('./UI/guest2.jpg'),size=(300,100))
-#tieude
-global name
-name=CTkLabel(master=app, text="Angel", font=("000GosmickSansTB",70) , text_color = "#343434",image=my_img)
-#boxchat
-global textbox
-textbox = CTkTextbox(master = app, width=650,height=400, scrollbar_button_color = "#FFCC70", corner_radius=16, border_color="#FFCC70", border_width=5,font=("000GosmickSansTB",20))
-textbox.place(relx=0.5, rely=0.55, anchor="center")
-#dat vitri
-name.place(relx=0.5, rely=0.1, anchor="center")
-
-intro = CTkImage(light_image=Image.open('./UI/intro.png'), size=(800,600))
-global lab
-lab = CTkLabel(master=app, text="", image=intro)
-lab.place(relx=0,rely=0)
-
-def xoaten():
-    name.destroy()
-def doi1():
-    xoaten()
-    global name
-    name=CTkLabel(master=app, text="Angel", font=("000GosmickSansTB",70) , text_color = "#343434",image =guest)
-    name.place(relx=0.5, rely=0.1, anchor="center")
-def doi2():
-    xoaten()
-    global name
-    name=CTkLabel(master=app, text="Angel", font=("000GosmickSansTB",70) , text_color = "#343434",image=my_img)
-    name.place(relx=0.5, rely=0.1, anchor="center")
-def send_message(message):
-    # Lấy tin nhắn từ hộp nhập liệu
-    #ham message lay tu voice
-    doi1()
-    wait_there()
-    # Thêm tin nhắn vào hộp thoại
-    textbox.insert("end", f"[Bạn]: {message}\n")
-    wait_there()
+#Face Recognition Class
+class Face_Recognizer:
     
-def reply_message(reply):
-    doi2()
-    wait_there()
-    textbox.insert("end", f"[ANGEL]: {reply}\n")
-    textbox.see('end')
-    wait_there()
+    #Initialize
+    def __init__(self):
+        #Face Detection Init
+        self.faceDetect=cv2.CascadeClassifier('./face_recognizer/haarcascade_frontalface_default.xml')
+        #Face Recognition Init
+        self.recognizer = cv2.face.LBPHFaceRecognizer_create()
+        self.recognizer.read('./face_recognizer/recognizer/trainner.yml')
+        self.id=0
+
+    #Get Profile
+    def getProfile(self,id):
+        conn=sqlite3.connect("./face_recognizer/FaceBaseNew.db")
+        cursor=conn.execute("SELECT * FROM People WHERE ID="+str(id))
+        profile=None
+        for row in cursor:
+            profile=row
+        conn.close()
+        return profile
     
-def Mistral_update(reply):
-    img_wait()
-    textbox.insert("end",f"{reply}")
-    textbox.see('end')
-    img_wait()
+    #Face Recognition
+    def FaceDetector(self):
+        cam=cv2.VideoCapture(SETTING.FR_CAM_PORT)
+        username = ""
+        while(True):
+            ret,img=cam.read()
+            color_coverted = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) 
+            pil_image = Image.fromarray(color_coverted) 
+            UI_Controller.image_update(pil_image,False)
+            # Lật ảnh cho đỡ bị ngược
+            img = cv2.flip(img, 1)
 
-def image_update(img,check):
-    your_image = customtkinter.CTkImage(light_image=img, size=(650, 400))
-    ftextbox = CTkLabel(master=app, image=your_image, text='')
-    ftextbox.place(relx=0.5, rely=0.55, anchor="center")
-    img_wait()
-    ftextbox.destroy()
-    if (check):
-        print("Destroyed!")
-        wait_there()
+            # Vẽ khung chữ nhật để định vị vùng người dùng đưa mặt vào
+            centerH = img.shape[0] // 2
+            centerW = img.shape[1] // 2
+            sizeboxW = 650
+            sizeboxH = 400
+            check = False
+            cv2.rectangle(img, (centerW - sizeboxW // 2, centerH - sizeboxH // 2),
+                        (centerW + sizeboxW // 2, centerH + sizeboxH // 2), (255, 255, 255), 5)
 
-def FaceDetector():
-    cam=cv2.VideoCapture(0)
-    username = ""
-    while(True):
+            # Chuyển ảnh về xám
+            gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
-        # Đọc ảnh từ camera
-        ret,img=cam.read()
-        color_coverted = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) 
-        pil_image = Image.fromarray(color_coverted) 
-        image_update(pil_image,False)
-        # Lật ảnh cho đỡ bị ngược
-        img = cv2.flip(img, 1)
+            # Phát hiện các khuôn mặt trong ảnh camera
+            faces=self.faceDetect.detectMultiScale(gray,1.3,5)
 
-        # Vẽ khung chữ nhật để định vị vùng người dùng đưa mặt vào
-        centerH = img.shape[0] // 2
-        centerW = img.shape[1] // 2
-        sizeboxW = 650
-        sizeboxH = 400
-        check = False
-        cv2.rectangle(img, (centerW - sizeboxW // 2, centerH - sizeboxH // 2),
-                    (centerW + sizeboxW // 2, centerH + sizeboxH // 2), (255, 255, 255), 5)
+            # Lặp qua các khuôn mặt nhận được để hiện thông tin
+            for(x,y,w,h) in faces:
+                # Nhận diện khuôn mặt, trả ra 2 tham số id: mã nhân viên và dist (độ sai khác)
+                id,dist=self.recognizer.predict(gray[y:y+h,x:x+w])
 
-        # Chuyển ảnh về xám
-        gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+                profile=None
 
-        # Phát hiện các khuôn mặt trong ảnh camera
-        faces=faceDetect.detectMultiScale(gray,1.3,5)
+                # Nếu độ sai khác < 75% thì lấy profile
+                if (dist<=75):
+                    profile=self.getProfile(id)
 
-        # Lặp qua các khuôn mặt nhận được để hiện thông tin
-        for(x,y,w,h) in faces:
-            # Nhận diện khuôn mặt, trả ra 2 tham số id: mã nhân viên và dist (độ sai khác)
-            id,dist=recognizer.predict(gray[y:y+h,x:x+w])
-
-            profile=None
-
-            # Nếu độ sai khác < 75% thì lấy profile
-            if (dist<=75):
-                profile=getProfile(id)
-
-            # Hiển thị thông tin tên người hoặc Unknown nếu không tìm thấy
-            if(profile!=None):
-                #cv2.putText(img, "Name: " + str(profile[1]), (x,y+h+30), fontface, fontscale, fontcolor ,2)
-                check = True
-                username = str(profile[1])
-            else:
-                pass
-                #cv2.putText(img, "Name: Unknown", (x, y + h + 30), fontface, fontscale, fontcolor1, 2)
-        if check==True:
-            image_update(pil_image,True)
-            break
-    cam.release()
-    return username
-
-def UI_out(reply):
-    str = reply
-    reply_message(str)
-
-def on_enter(event):
-    # Nếu phím enter được nhấn, thì gọi hàm send_message()
-    lab.destroy()
-    wait_there()
-    username = FaceDetector()
-    Program.robot_brain = f"Hello {username}!"
-    UI_out(Program.robot_brain)
-    Program.Say()
-    Program.run()
+                # Hiển thị thông tin tên người hoặc Unknown nếu không tìm thấy
+                if(profile!=None):
+                    #cv2.putText(img, "Name: " + str(profile[1]), (x,y+h+30), fontface, fontscale, fontcolor ,2)
+                    check = True
+                    username = str(profile[1])
+                else:
+                    pass
+                    #cv2.putText(img, "Name: Unknown", (x, y + h + 30), fontface, fontscale, fontcolor1, 2)
+            if check==True:
+                UI_Controller.image_update(pil_image,True)
+                break
+        cam.release()
+        return username
+        
     
-def loop():
-    wait_there()
-    username = FaceDetector()
-    Program.robot_brain = f"Hello {username}!"
-    UI_out(Program.robot_brain)
-    Program.Say()
-    Program.run()
+#UI Controller Class
+class UI:
+    
+    #Initialize
+    def __init__(self):
+        #Main UI
+        self.app = CTk()
+        self.app.title("Angel Asistant")
+        self.app.geometry("800x600")
+        set_appearance_mode("dark")
+        
+        #Face Detection UI
+        self.fmy_img = CTkImage(light_image=Image.open('./UI/angel2.jpg'),size=(300,100))
+        self.fname=CTkLabel(master=self.app, text="Angel", font=("000GosmickSansTB",70) , text_color = "#343434",image=self.fmy_img)
+        self.fname.place(relx=0.5, rely=0.1, anchor="center")
+        
+        #Intro UI
+        self.my_img = CTkImage(light_image=Image.open('./UI/angel2.jpg'),size=(300,100))
+        self.guest = CTkImage(light_image =Image.open('./UI/guest2.jpg'),size=(300,100))
+        global name
+        name=CTkLabel(master=self.app, text="Angel", font=("000GosmickSansTB",70) , text_color = "#343434",image=self.my_img)
+        global textbox
+        textbox = CTkTextbox(master = self.app, width=650,height=400, scrollbar_button_color = "#FFCC70", corner_radius=16, border_color="#FFCC70", border_width=5,font=("000GosmickSansTB",20))
+        textbox.place(relx=0.5, rely=0.55, anchor="center")
+        name.place(relx=0.5, rely=0.1, anchor="center")
+        intro = CTkImage(light_image=Image.open('./UI/intro.png'), size=(800,600))
+        global lab
+        lab = CTkLabel(master=self.app, text="", image=intro)
+        lab.place(relx=0,rely=0)
+        
+    #UI Controller Function
+    def wait_there(self):
+        var = IntVar()
+        self.app.after(1000, var.set, 1)
+        self.app.wait_variable(var)
+        
+    def img_wait(self):
+        var = IntVar()
+        self.app.after(100, var.set, 1)
+        self.app.wait_variable(var)
+
+    def xoaten(self):
+        name.destroy()
+        
+    def doi1(self):
+        self.xoaten()
+        global name
+        name=CTkLabel(master=self.app, text="Angel", font=("000GosmickSansTB",70) , text_color = "#343434",image=self.guest)
+        name.place(relx=0.5, rely=0.1, anchor="center")
+        
+    def doi2(self):
+        self.xoaten()
+        global name
+        name=CTkLabel(master=self.app, text="Angel", font=("000GosmickSansTB",70) , text_color = "#343434",image=self.my_img)
+        name.place(relx=0.5, rely=0.1, anchor="center")
+        
+    def send_message(self,message):
+        # Lấy tin nhắn từ hộp nhập liệu
+        self.doi1()
+        self.wait_there()
+        # Thêm tin nhắn vào hộp thoại
+        textbox.insert("end", f"[Bạn]: {message}\n")
+        self.wait_there()
+        
+    def reply_message(self,reply):
+        self.doi2()
+        self.wait_there()
+        textbox.insert("end", f"[ANGEL]: {reply}\n")
+        textbox.see('end')
+        self.wait_there()
+        
+    def Mistral_update(self,reply):
+        self.img_wait()
+        textbox.insert("end",f"{reply}")
+        textbox.see('end')
+        self.img_wait()
+
+    def image_update(self,img,check):
+        your_image = customtkinter.CTkImage(light_image=img, size=(650, 400))
+        ftextbox = CTkLabel(master=self.app, image=your_image, text='')
+        ftextbox.place(relx=0.5, rely=0.55, anchor="center")
+        self.img_wait()
+        ftextbox.destroy()
+        if (check):
+            print("Destroyed!")
+            self.wait_there()
+
+    def UI_out(self,reply):
+        str = reply
+        self.reply_message(str)
+
+    def on_enter(self,event):
+        lab.destroy()
+        self.wait_there()
+        username = Face_Recognition.FaceDetector()
+        Program.robot_brain = f"Hello {username}!"
+        self.UI_out(Program.robot_brain)
+        Program.Say()
+        if (SETTING.isDebug):
+            Program.tester()
+        else:
+            Program.run()
+        
+    def loop(self):
+        self.wait_there()
+        username = Face_Recognition.FaceDetector()
+        Program.robot_brain = f"Hello {username}!"
+        self.UI_out(Program.robot_brain)
+        Program.Say()
+        if (SETTING.isDebug):
+            Program.tester()
+        else:
+            Program.run()
+    
 #Assistant Class
 class Assistant:
     
@@ -312,13 +316,14 @@ class Assistant:
         self.preans2 = "-1"
         self.query = f"""
 """
-    
+
     def tester_listen(self):
         self.you = input("You: ")
         self.you = self.you.lower()
     
     def tester_say(self):
-        UI_out(self.robot_brain)
+        UI_Controller.UI_out(self.robot_brain)
+        print(f"ANGEL: {self.robot_brain}")
     
     def get_current_day(self, day):
         ans = str(day)
@@ -361,18 +366,6 @@ class Assistant:
         else:
             ans = "December"
         return ans
-    
-    def process_answer(self,answer):
-        answer = answer.replace("bing","Angel")
-        answer = answer.replace("Bing","Angel")
-        answer = answer.replace("chatgpt","")
-        answer = answer.replace("gpt-3","")
-        answer = answer.replace("gpt-4","")
-        answer = answer.replace("gpt","")
-        answer = answer.replace("openai","")
-        answer = answer.replace("chatbot","")
-        answer = answer.replace("bot","")
-        return answer
          
     def get_current_name(self,you):
         name = ""
@@ -402,7 +395,7 @@ class Assistant:
             ans="Nothing!"
         return ans
     
-    def get_current_city(self,city,country):
+    def get_current_location(self,city,country):
         city.replace("city","")
         city = city.lower()
         country = country.lower()
@@ -416,10 +409,6 @@ class Assistant:
             country = "VN"
         path.close()
         return "{}, {}".format(city,country)
-    
-    def clean_search_info(self,info):
-        ans = "Please tell me information about " + info + " shortly"
-        return ans
     
     def clean_remind_request(self,request):
         request = request.replace("remind me to","")
@@ -493,6 +482,7 @@ class Assistant:
     
     def add_reminder(self, hour, minute, reminder_message):
         self.reminders.append((hour, minute, reminder_message))
+        self.save_to_log()
 
     def check_reminders(self):
         DATA = []
@@ -502,7 +492,9 @@ class Assistant:
         for hour, minute, reminder_message in self.reminders:
             if current_hour == hour and current_minute == minute:
                 DATA.append(reminder_message)
-                UI_out(f"Reminder: {reminder_message}")
+                self.reminders.remove((hour, minute, reminder_message))
+                #UI_Controller.UI_out(f"Reminder: {reminder_message}")
+        self.save_to_log()
         return DATA
 
     def save_to_log(self, log_filename="./logs/remind.txt"):
@@ -539,7 +531,7 @@ class Assistant:
             if token["choices"][0]["text"]=='\n':
                 check = True
             if check == True:
-                Mistral_update(token["choices"][0]["text"])
+                UI_Controller.Mistral_update(token["choices"][0]["text"])
                 res+=token["choices"][0]["text"]
         template2 = f"""
 <|im_start|>assistant
@@ -556,7 +548,7 @@ class Assistant:
         if self.tester_mode == True:
             self.tester_listen()
             return
-        UI_out("...")
+        UI_Controller.UI_out("...")
         with speech_recognition.Microphone() as source:
             #self.robot_ear.adjust_for_ambient_noise(source, 1)
             audio = self.robot_ear.listen(source,phrase_time_limit = 10)
@@ -569,7 +561,7 @@ class Assistant:
             self.you = self.you.lower()
         except:
             self.you = ""
-        send_message(self.you)
+        UI_Controller.send_message(self.you)
     
     def Brain(self):
         
@@ -611,9 +603,15 @@ class Assistant:
         elif "weather" in response or "weather" in you:
             api_key = "fe8d8c65cf345889139d8e545f57819a" #generate your own api key from open weather
             base_url = "http://api.openweathermap.org/data/2.5/weather?"
-            country = "Vietnam"
-            city = "Nha Trang"
-            city_name = self.get_current_city(city, country)
+            self.robot_brain = "Please tell me your country!"
+            self.Say()
+            self.Listen()
+            country = self.you
+            self.robot_brain = "Please tell me your city!"
+            self.Say()
+            self.Listen()
+            city = self.you
+            city_name = self.get_current_location(city, country)
             complete_url = base_url + "appid=" + api_key + "&q=" + city_name + "&units=metric"
             response = requests.get(complete_url)
             x = response.json()
@@ -672,7 +670,7 @@ class Assistant:
         
         elif response == "object_detection" or "what is it" in you or "what is this" in you:
             #List objects (sorted by xmin, ymin)
-            capture_image(0)
+            capture_image(SETTING.OD_CAM_PORT)
             Detector.list_objects(img)
             fi = open("./logs/objects_res.txt", "r")
             DATA = []
@@ -699,14 +697,14 @@ class Assistant:
 
         elif "caption" in you:
             #Image Captioning
-            predict_capture(0)
+            predict_capture(SETTING.OD_CAM_PORT)
             self.robot_brain = Caption.predict_step("./Images/CAP.png")
         
         elif response == "text_scanning":
             #Scanning documents
             
             #Capture
-            capture_text(0)
+            capture_text(SETTING.TC_CAM_PORT)
             scanner.run()
             fi = open("./logs/text_log.txt","r")
             self.robot_brain = fi.read()
@@ -726,7 +724,7 @@ class Assistant:
             self.robot_brain = "Restarting..."
         
         if (self.isSay and not self.tester_mode and not check):
-            UI_out(self.robot_brain)
+            UI_Controller.UI_out(self.robot_brain)
             
         self.preans1 = self.preans2
         self.preans2 = self.you
@@ -742,24 +740,22 @@ class Assistant:
     
     def run(self):
         #Running loop
-        # self.load_to_do_list()
-        # self.load_from_log()
+        self.load_to_do_list()
+        self.load_from_log()
         while True:
             if (self.isExit):
-                # UI_out("Angel: Have a nice day!")
-                # self.robot_mouth.say("Have a nice day!")
                 self.robot_mouth.runAndWait()
-                #self.save_to_do_list()
+                self.save_to_do_list()
                 break
-            #DATA = self.check_reminders()
-            # for task in DATA:
-            #     self.robot_brain = "It's time to " + task
-            #     self.Say()
+            DATA = self.check_reminders()
+            for task in DATA:
+                self.robot_brain = "It's time to " + task
+                self.Say()
             self.Listen()
             self.Brain()
             self.Say()
-        # self.save_to_do_list()
-        # self.save_to_log()
+        self.save_to_do_list()
+        self.save_to_log()
         if self.you == "turn off":
             print("Finished...")
             exit(0)
@@ -767,25 +763,41 @@ class Assistant:
         self.timedOut = 3
         self.preans1 = "-1"
         self.preans2 = "-1"
-        loop()
+        UI_Controller.loop()
             
     def tester(self):
-        #Test Mode
-        self.load_to_do_list()
+        #Tester mode
         self.tester_mode = True
+        self.load_to_do_list()
+        self.load_from_log()
         while True:
             if (self.isExit):
-                # UI_out("Angel: Have a nice day!")
-                # self.robot_mouth.say("Have a nice day!")
                 self.robot_mouth.runAndWait()
                 self.save_to_do_list()
                 break
+            DATA = self.check_reminders()
+            for task in DATA:
+                self.robot_brain = "It's time to " + task
+                self.Say()
             self.Listen()
             self.Brain()
             self.Say()
+        self.save_to_do_list()
+        self.save_to_log()
+        if self.you == "turn off":
+            print("Finished...")
+            exit(0)
+        self.isExit = False
+        self.timedOut = 3
+        self.preans1 = "-1"
+        self.preans2 = "-1"
+        self.tester_mode = False
+        UI_Controller.loop()
 
 print("Running...")       
 Program = Assistant(robot_ear, robot_mouth, robot_brain)
-app.bind("<Return>",on_enter)
-app.mainloop()
+UI_Controller = UI()
+Face_Recognition = Face_Recognizer()
+UI_Controller.app.bind("<Return>",UI_Controller.on_enter)
+UI_Controller.app.mainloop()
 print("Finished...")

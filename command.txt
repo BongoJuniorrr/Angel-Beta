@@ -1,1 +1,0 @@
-python detect.py --weights D:\KHKT\KHKT\YOLO_model\yolov5m_Objects365.pt --source D:\KHKT\KHKT\Images\Kitchen-Preview.mp4

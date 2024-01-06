@@ -7,6 +7,7 @@ import torch
 import yaml
 import time
 from PIL import Image
+import SETTING
 
 LOG_CURR = 1
 EPS = 3
@@ -22,7 +23,7 @@ class Object_Detection:
     device=None
     model=None
     
-    def __init__(self,dev='0'):
+    def __init__(self,dev=SETTING.device):
         if (torch.cuda.is_available() and dev!='cpu'):  
             self.device = dev
         else:
@@ -122,7 +123,7 @@ class Object_Detection:
     
     def detect(self):
         self.load_model()
-        capture = cv2.VideoCapture(0)
+        capture = cv2.VideoCapture(SETTING.OD_CAM_PORT)
         
         if not capture.isOpened():
             return
@@ -168,7 +169,7 @@ def LoadData():
         data = yaml.load(yml, Loader=yaml.FullLoader)
     log = open("./logs/log.txt","w")
 
-Object = Object_Detection("0")
+Object = Object_Detection(SETTING.device)
 
 # Image
 #img = Image.open('./Images/coffee.jpg')
