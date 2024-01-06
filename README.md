@@ -20,6 +20,9 @@
 <h3>2.1.Install depencies</h3>
 
 - pip install -r requirements.txt
+
+- LLM: https://huggingface.co/TheBloke/Mistral-7B-OpenOrca-GGUF/blob/main/mistral-7b-openorca.Q2_K.gguf. You need to install LLM to use our program. Place at: "root/LLM_model/" and change path at "llmpath" in "SETTING.py"
+
 <h3>2.1.Commands to use functions</h3>
 
 - Object-Detection: "What is it" or something like this!
