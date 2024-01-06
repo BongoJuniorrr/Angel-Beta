@@ -23,7 +23,7 @@
 
 - LLM: https://huggingface.co/TheBloke/Mistral-7B-OpenOrca-GGUF/blob/main/mistral-7b-openorca.Q2_K.gguf. You need to install LLM to use our program. Place at: "root/LLM_model/" and change path at "llmpath" in "SETTING.py"
 
-<h3>2.1.Commands to use functions</h3>
+<h3>2.2.Commands to use functions</h3>
 
 - Object-Detection: "What is it" or something like this!
 
@@ -37,7 +37,7 @@
 
 - Face-recognition: Use "NewUser.py" in "root/face_recognizer/" to create a new user
 
-<h3>2.2.Preview</h3>
+<h3>2.3.Preview</h3>
 
 - Programme preview: https://1drv.ms/u/s!Ap59dhSh2RWRgYkI0-1hxUxU-4r-8A?e=aIDb7B
 
