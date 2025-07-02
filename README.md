@@ -58,6 +58,6 @@
 
 - Informatics student at Le Quy Don High School for the Gifted - Nha Trang - Khanh Hoa - Viet Nam
 
-- LinkedIn:
+- LinkedIn: 
 
-- Gmail:
+- Gmail: 2007minhhoaiphan@gmail.com 
